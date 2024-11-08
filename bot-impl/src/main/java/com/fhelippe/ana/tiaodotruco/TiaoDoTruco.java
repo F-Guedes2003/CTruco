@@ -61,7 +61,6 @@ public class TiaoDoTruco implements BotServiceProvider {
     }
 
     public double handStrength(GameIntel intel) {
-
         return intel.getCards().stream()
                 .mapToDouble(e -> {
                     double strenght = 0;
