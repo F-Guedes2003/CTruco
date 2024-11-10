@@ -19,14 +19,24 @@ public class TiaoDoTruco implements BotServiceProvider {
 
     @Override
     public boolean decideIfRaises(GameIntel intel) {
-        if(wonFirstRound(intel)) {
-          if(hasManilha(intel) || handStrength(intel) > 20) return true;
+        if (intel.getRoundResults().size() >=1) {
+            if (hasZap(intel) && hasCopas(intel)) return true;
 
-          if(handStrength(intel) > 25) return true;
-        };
+            if (wonFirstRound(intel)) {
+                if (hasManilha(intel)) return true;
+                if (hasZap(intel)) return true;
 
-        if(!intel.getRoundResults().isEmpty()) {
-            if(hasZap(intel) && hasCopas(intel)) return true;
+            } else if(!wonFirstRound(intel)){
+                if (handStrength(intel) > 20 && (hasManilha(intel) || hasZap(intel) || hasCopas(intel))) return true;
+            }
+
+            if (intel.getRoundResults().size() > 1 && intel.getRoundResults().get(1) == GameIntel.RoundResult.WON && intel.getRoundResults().get(0) == GameIntel.RoundResult.LOST) {
+                if (hasManilha(intel)) return true;
+                if (handStrength(intel) > 20 && (hasZap(intel) || hasCopas(intel))) return true;
+            }
+
+            if (intel.getRoundResults().size()==2 && intel.getOpponentCard().isPresent())
+                if (canKill(intel, getStrongestCard(intel))) return true;
         }
 
         return handStrength(intel) > 27 && hasManilha(intel);
